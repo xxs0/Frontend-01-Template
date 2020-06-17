@@ -1,0 +1,190 @@
+<script>
+  let names = Object.getOwnPropertyNames(window);
+
+  function filter(names, prop) {
+    let set = new Set();
+    prop.forEach(v => set.add(v));
+    return names.filter(v => !set.has(v));
+  }
+  // ECMA 262
+  buildObjectsArr = [
+    "globalThis",
+    "Infinity",
+    "NaN",
+    "undefined",
+    "eval",
+    "isFinite",
+    "isNaN",
+    "parseFloat",
+    "parseInt",
+    "decodeURI",
+    "decodeURIComponent",
+    "encodeURI",
+    "encodeURIComponent",
+    "Array",
+    "ArrayBuffer",
+    "BigInt",
+    "BigInt64Array",
+    "BigUint64Array",
+    "Boolean",
+    "DataView",
+    "Date",
+    "Error",
+    "EvalError",
+    "Float32Array",
+    "Float64Array",
+    "Function",
+    "Int8Array",
+    "Int16Array",
+    "Int32Array",
+    "Map",
+    "Number",
+    "Object",
+    "Promise",
+    "Proxy",
+    "RangeError",
+    "ReferenceError",
+    "RegExp",
+    "Set",
+    "SharedArrayBuffer",
+    "String",
+    "Symbol",
+    "SyntaxError",
+    "TypeError",
+    "Uint8Array",
+    "Uint8ClampedArray",
+    "Uint16Array",
+    "Uint32Array",
+    "URIError",
+    "WeakMap",
+    "WeakSet",
+    "Atomics",
+    "JSON",
+    "Math",
+    "Reflect",
+    "escape",
+    "unescape"
+  ]
+
+  names = filter(names, buildObjectsArr);
+
+  // node
+  names = names.filter(v => {
+    try {
+      return !(window[v].prototype instanceof Node);
+    } catch(err) {
+      return true;
+    }
+  }).filter(v => v !== "Node");
+
+  // ECMA 402
+  intArr = ["Intl"];
+
+  names = filter(names, intArr);
+
+  // on
+  names = names.filter(v => !v.match(/^on/));
+
+  // webkit
+  names = names.filter(v => !v.match(/^webkit/));
+
+  // // window
+
+  // webGL: https://www.khronos.org/registry/webgl/specs/latest/1.0/
+  webGLArr = [
+    "WebGLRenderingContext",
+    "WebGL2RenderingContext",
+    "WebGLActiveInfo",
+    "WebGLBuffer",
+    "WebGLContextEvent",
+    "WebGLFramebuffer",
+    "WebGLProgram",
+    "WebGLQuery",
+    "WebGLRenderbuffer",
+    "WebGLSampler",
+    "WebGLShader",
+    "WebGLShaderPrecisionFormat",
+    "WebGLSync",
+    "WebGLTexture",
+    "WebGLTransformFeedback",
+    "WebGLUniformLocation",
+    "WebGLVertexArrayObject",
+  ];
+  names = filter(names, webGLArr);
+
+  // webaudio: https://webaudio.github.io/web-audio-api/
+  webaudioArr = [
+    "BaseAudioContext",
+    "AudioContext",
+    "OfflineAudioContext",
+    "AudioBuffer",
+    "AudioNode",
+    "AudioParam",
+    "AudioScheduledSourceNode",
+    "AnalyserNode",
+    "AudioBufferSourceNode",
+    "AudioDestinationNode",
+    "AudioListener",
+    "AudioProcessingEvent",
+    "BiquadFilterNode",
+    "ChannelMergerNode",
+    "ChannelSplitterNode",
+    "ConstantSourceNode",
+    "ConvolverNode",
+    "DelayNode",
+    "DynamicsCompressorNode",
+    "GainNode",
+    "IIRFilterNode",
+    "MediaElementAudioSourceNode",
+    "MediaStreamAudioDestinationNode",
+    "MediaStreamAudioSourceNode",
+    "MediaStreamTrackAudioSourceNode",
+    "OscillatorNode",
+    "PannerNode",
+    "PeriodicWave",
+    "ScriptProcessorNode",
+    "StereoPannerNode",
+    "WaveShaperNode",
+    "AudioWorklet"
+  ];
+  names = filter(names, webaudioArr);
+
+  // textdecoder: https://encoding.spec.whatwg.org/
+  textDecodeArr = ["TextDecoder", "TextEncoder", "TextDecoderStream", "TextEncoderStream"];
+  names = filter(names, textDecodeArr);
+
+  // stream: https://streams.spec.whatwg.org/
+  streamArr = [
+    "ReadableStream",
+    "ReadableStreamDefaultReader",
+    "ReadableStreamBYOBReader",
+    "ReadableStreamDefaultController",
+    "ReadableByteStreamController",
+    "ReadableStreamBYOBRequest",
+    "WritableStream",
+    "WritableStreamDefaultWriter",
+    "WritableStreamDefaultController",
+    "TransformStream",
+    "TransformStreamDefaultController",
+    "ByteLengthQueuingStrategy",
+    "CountQueuingStrategy",
+  ];
+  names = filter(names, streamArr);
+
+  // wicg: https://wicg.github.io/background-sync/spec/#sync-manager-interface
+  wicgArr = ["SyncManager"];
+  names = filter(names, wicgArr);
+
+  //https://html.spec.whatwg.org/#window
+
+  windowArr = ["window", "self", "document", "name", "location", "history", "customElements", "locationbar", "menubar", " personalbar", "scrollbars", "statusbar", "toolbar", "status", "close", "closed", "stop", "focus", " blur", "frames", "length", "top", "opener", "parent", "frameElement", "open", "navigator", "applicationCache", "alert", "confirm", "prompt", "print", "postMessage", "console"];
+
+  names = filter(names, windowArr);
+
+  // html: https://html.spec.whatwg.org/
+
+  htmlApiArr = ["ApplicationCache", "AudioTrack", "AudioTrackList", "BarProp", "BeforeUnloadEvent", "BroadcastChannel", "CanvasGradient", "CanvasPattern", "CanvasRenderingContext2D", "CloseEvent", "CustomElementRegistry", "DOMStringList", "DOMStringMap", "DataTransfer", "DataTransferItem", "DataTransferItemList", "DedicatedWorkerGlobalScope", "Document", "DragEvent", "ErrorEvent", "EventSource", "External", "FormDataEvent", "HTMLAllCollection", "HashChangeEvent", "History", "ImageBitmap", "ImageBitmapRenderingContext", "ImageData", "Location", "MediaError", "MessageChannel", "MessageEvent", "MessagePort", "MimeType", "MimeTypeArray", "Navigator", "OffscreenCanvas", "OffscreenCanvasRenderingContext2D", "PageTransitionEvent", "Path2D", "Plugin", "PluginArray", "PopStateEvent", "PromiseRejectionEvent", "RadioNodeList", "SharedWorker", "SharedWorkerGlobalScope", "Storage", "StorageEvent", "TextMetrics", "TextTrack", "TextTrackCue", "TextTrackCueList", "TextTrackList", "TimeRanges", "TrackEvent", "ValidityState", "VideoTrack", "VideoTrackList", "WebSocket", "Window", "Worker", "WorkerGlobalScope", "WorkerLocation", "WorkerNavigator"];
+  names = filter(names, htmlApiArr);
+
+  console.log(names)
+</script>

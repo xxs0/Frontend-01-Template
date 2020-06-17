@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+			.box {
+				display: inline-block;
+				margin: 5px;
+				width: 100px;
+				height: 100px;
+				background-color: green;
+				text-align: center;
+				vertical-align: middle;
+				line-height: 100px;
+				font-size: 25px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="board"></div>
+		<script>
+			// 待优化点：
+			// 1.check函数添加x,y，只检查至多4个方向
+			// 2.show用range或者createDocumentFragment插入
+			// 3.五子棋：bestChoice死循环？
+
+			let pattern = [
+					[0, 0, 0],
+					[0, 0, 0],
+					[0, 0, 0]
+				], color = 1;
+
+				// console.log(pattern);
+
+				function show(pattern) {
+					let board = document.getElementsByClassName('board')[0];
+					board.innerHTML = '';
+					for (let i = 0; i < pattern.length; i++) {
+						for (let j = 0; j < pattern.length; j++) {
+							let box = document.createElement('div');
+							box.classList.add('box');
+							pattern[i][j] === 2 ? box.textContent = "❌"
+								: pattern[i][j] === 1 ? box.textContent = "⭕️" : box.textContent = "";
+							box.addEventListener('click', () => move(i, j));
+
+							board.appendChild(box)
+						}
+						board.appendChild(document.createElement('br'));
+					}
+				}
+
+				function move(x, y) {
+					if (pattern[x][y] !== 0) {
+						return;
+					}
+					pattern[x][y] = color;
+					if(check(pattern, color)) {
+						alert(color === 2 ? "❌ is winner!" : "⭕️ is winner!")
+					}
+					color = 3 - color;
+					show(pattern);
+					if (willWin(pattern, color)) {
+						console.log(color === 2 ? "❌ will win!" : "⭕️ will win!")
+					}
+				}
+
+				function check(pattern, color) { // 待优化点：x,y 只需要check四个方向
+					// 横向
+					for (let i = 0; i < pattern.length; i++) {
+						let win = true;
+						for (let j = 0; j < pattern.length; j++) {
+							if (pattern[i][j] !== color) {
+								win = false;
+								break;
+							}
+						}
+						if (win) {
+							return true;
+						}
+					}
+
+					//纵向
+					for (let i = 0; i < pattern.length; i++) {
+						let win = true;
+						for (let j = 0; j < pattern.length; j++) {
+							if (pattern[j][i] !== color) {
+								win = false;
+								break;
+							}
+						}
+						if (win) {
+							return true;
+						}
+					}
+
+					// 正斜方向
+					{
+						let win = true;
+						for (let i = 0; i < pattern.length; i++) {
+							if (pattern[i][i] !== color) {
+								win = false;
+								break;
+							}
+						}
+						if (win) {
+							return true;
+						}
+					}
+
+					// 反斜方向
+					{
+						let win = true;
+						for (let i = 0; i < pattern.length; i++) {
+							if (pattern[pattern.length - 1 - i][i] !== color) {
+								win = false;
+								break;
+							}
+						}
+						if (win) {
+							return true;
+						}
+					}
+
+					return false;
+				}
+
+				function clone(obj) {
+					return JSON.parse(JSON.stringify(obj));
+				}
+
+				function willWin(pattern, color) {
+					for (let i = 0; i < pattern.length; i++) {
+						for (let j = 0; j < pattern.length; j++) {
+							if (pattern[i][j] !== 0) {
+								continue;
+							}
+							let tmp = clone(pattern);
+							tmp[i][j] = color;
+							if (check(tmp, color)) {
+								return [i, j];
+							}
+						}
+					}
+					return null;
+				}
+
+				function bestChoice(pattern, color) {
+					let point = willWin(pattern, color);
+					if (point) {
+						return {
+							point: point,
+							result: 1
+						}
+					}
+
+					let result = -1;
+
+					for (let i = 0; i < pattern.length; i++) {
+						for( let j = 0; j < pattern.length; j++) {
+							if (pattern[i][j] !== 0) {
+								continue;
+							}
+							let tmp = clone(pattern);
+							tmp[i][j] = color;
+							let opp = bestChoice(tmp, 3 - color);
+							if (- opp.result >= result) {
+								point = [j, i];
+								result = - opp.result;
+							}
+						}
+					}
+
+					return {
+						point: point,
+						result: point ? result : 0
+					}
+				}
+
+				show(pattern);
+
+		</script>
+	</body>
+</html>
