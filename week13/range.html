@@ -1,0 +1,62 @@
+<style>
+  #dragable {
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+    background-color: pink;
+  }
+</style>
+
+<div id="container">
+  文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围 文本范围
+</div>
+<div id="dragable"></div>
+
+<script>
+  let dragable = document.getElementById('dragable'),container = document.getElementById('container');
+
+  let baseX = 0, baseY = 0;
+
+  dragable.addEventListener('mousedown', () => {
+    let startX = event.clientX, startY = event.clientY;
+    let move = (event) => {
+      let range = nearest(event.clientX, event.clientY);
+      range.insertNode(dragable)
+    },
+    up = () => {
+      baseX = baseX + event.clientX - startX, baseY = baseY + event.clientY - startY;
+      document.removeEventListener('mousemove', move);
+      document.removeEventListener('mouseup', up);
+    }
+
+    document.addEventListener('mousemove', move);
+    document.addEventListener('mouseup', up);
+  })
+
+  let ranges = [];
+  for (let i = 0; i < container.childNodes[0].textContent.length; i++) {
+    let range = document.createRange();
+    range.setStart(container.childNodes[0], i);
+    range.setEnd(container.childNodes[0], i);
+    ranges.push(range);
+  }
+
+  function nearest(x0, y0) {
+    let nearestRange = null;
+    let distance = Infinity;
+    for (let range of ranges) {
+      let {x, y} = range.getBoundingClientRect();
+      let d = (x0 - x) ** 2 + (y0 - y) ** 2;
+
+      if (d < distance) {
+        nearestRange = range;
+        distance = d;
+      }
+    }
+    return nearestRange;
+  }
+
+  document.addEventListener('selectstart', event => event.preventDefault());
+  // 思想：range当作埋在dom里面空格，与reactive、effect结合。
+  // 高能耗 在mousemove控制频率，并且不会在这么多位置dragable
+</script>
