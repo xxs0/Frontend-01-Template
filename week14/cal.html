@@ -1,0 +1,97 @@
+<html>
+  <head>
+    <title>Carousel Component</title>
+    <style>
+      .carousel {
+        width: 500px;
+        height: 300px;
+        white-space: nowrap;
+        outline: 1px solid blue;
+        zoom: .25;
+      }
+      .carousel>img {
+        width: 100%;
+        height: 100%;
+        transition:ease .5s;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="container">
+
+    </div>
+    <script>
+      class Carousel {
+        constructor() {
+          this.root = null;
+          this.data = null;
+        }
+
+        render() {
+          this.root = document.createElement('div');
+          this.root.classList.add('carousel');
+
+          for (let i of this.data) {
+            let element = document.createElement('img');
+            element.src = i;
+            this.root.appendChild(element);
+          }
+
+          let position = 0;
+          let nexPic = () => {
+            let nextPosition = (position + 1) % this.data.length;
+            console.log(this.root, this.root.childNodes.length)
+            let current = this.root.childNodes[position];
+            let next = this.root.childNodes[nextPosition];
+
+            current.style.transition = "ease 0s";
+            next.style.transition = "ease 0s";
+            current.style.transform = `translateX(${- 100 * position}%)`;
+            next.style.transform = `translateX(${100 -100 * nextPosition}%)`;
+
+            setTimeout(function(){ // 加setTimout或debugger才能行，直接移到外面没效
+              // 浏览器执行下面代码，并没有立即生效。需要1帧时间
+              // current.style.transition = "ease .5s";
+              // next.style.transition = "ease .5s";
+              current.style.transition = "";
+              next.style.transition = "";
+
+              current.style.transform = `translateX(${-100 - 100 * position}%)`;
+              next.style.transform = `translateX(${-100 * nextPosition}%)`;
+
+              position = nextPosition;
+            }, 16) // 16ms 一帧，诸多异步方案，16ms最安全。两段动画的话可以16ms隔开
+
+
+
+            console.log(position)
+            setTimeout(nexPic, 2000);
+          }
+          nexPic();
+        }
+      }
+
+      // create
+      let carousel = new Carousel();
+
+      // update
+      carousel.data = [
+        "https://static001.geekbang.org/resource/image/bb/21/bb38fb7c1073eaee1755f81131f11d21.jpg",
+        "https://static001.geekbang.org/resource/image/1b/21/1b809d9a2bdf3ecc481322d7c9223c21.jpg",
+        "https://static001.geekbang.org/resource/image/b6/4f/b6d65b2f12646a9fd6b8cb2b020d754f.jpg",
+        "https://static001.geekbang.org/resource/image/73/e4/730ea9c393def7975deceb48b3eb6fe4.jpg",
+    ];
+      carousel.render();
+
+      // mount
+      document.getElementById('container').appendChild(carousel.root);
+
+      //1.如果加拖拽功能 是不是就要3张图片为一组了
+
+      // 2.如果是滚动过程中，突然鼠标拖动图片，要怎么处理。
+
+
+    </script>
+  </body>
+</html>
